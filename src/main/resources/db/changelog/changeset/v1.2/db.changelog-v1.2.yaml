@@ -1,14 +1,14 @@
 databaseChangeLog:
   - changeSet:
-      id: add-created-at-to-users
+      id: insert-default-manager
       author: nromanen
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: SELECT COUNT(*) FROM users WHERE email = 'manager@gmail.com'
       changes:
-        - addColumn:
-            tableName: users
-            columns:
-              - column:
-                  name: created_at
-                  type: timestamp
-                  defaultValueComputed: CURRENT_TIMESTAMP
-                  constraints:
-                    nullable: false
+        - sql:
+            sql: >
+              INSERT INTO users (email, password, role, token)
+              VALUES ('manager@gmail.com', '$2a$10$KNzjVQ99BVyQMPcCHj4Jp.WQKniCmA0X/IxWvr6dFsfWD.2msbPRS', 'ROLE_MANAGER', null)
